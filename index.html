@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Masil - 프리미엄 냉장고 음료 관리</title>
+  <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="background">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+  </div>
+
+  <div class="app-container">
+    <header>
+      <h1 id="logo-home" style="cursor: pointer; user-select: none;" title="첫 화면으로">🧊 Masil</h1>
+      <div class="header-actions" style="display: flex; gap: 1rem; align-items: center;">
+        <nav>
+          <button class="nav-btn active" data-target="fridge-view">냉장고</button>
+          <button class="nav-btn" data-target="stats-view">소비 통계</button>
+          <button class="nav-btn" data-target="admin-view">관리</button>
+        </nav>
+        <div style="display: flex; gap: 1rem;">
+          <button id="open-wish-btn" class="icon-btn-wrapper" title="희망 음료 신청">
+            <div class="icon-btn" style="color: #60a5fa; border-color: rgba(96,165,250,0.4);">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+            </div>
+            <span class="icon-text">희망음료</span>
+          </button>
+          <button id="open-register-btn" class="icon-btn-wrapper" title="새 사용자 등록">
+          <div class="icon-btn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><line x1="19" y1="8" x2="19" y2="14"></line><line x1="22" y1="11" x2="16" y2="11"></line></svg>
+          </div>
+          <span class="icon-text">사용자등록</span>
+        </button>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <!-- Fridge View (User) -->
+      <section id="fridge-view" class="view active">
+        <div style="display: flex; align-items: baseline; gap: 0.8rem; margin-bottom: 1.5rem;">
+          <h2 style="margin: 0;">음료를 선택하세요</h2>
+          <span style="font-size: 0.95rem; color: var(--primary); font-weight: 500; opacity: 0.9;">한번에 한 개씩만 - 건강을 위하여 🌿</span>
+        </div>
+        <div class="beverage-grid" id="beverage-grid">
+          <!-- Populated by JS -->
+        </div>
+      </section>
+
+      <!-- Admin View -->
+      <section id="admin-view" class="view">
+        <div id="admin-login-area">
+          <h2>관리자 접근</h2>
+          <div class="auth-card">
+            <p style="color: #94a3b8; margin-bottom: 1.5rem; font-size: 0.95rem;">음료 재고 관리를 위해 관리자 권한이 필요합니다.</p>
+            <input type="password" id="admin-pin" placeholder="관리자 PIN (0000)">
+            <p id="admin-error" class="error-msg"></p>
+            <button id="admin-login-btn">로그인</button>
+          </div>
+        </div>
+        <div id="admin-dashboard" class="hidden">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+            <h2 style="margin: 0;">대량 입고 관리</h2>
+            <button class="btn-primary" id="open-add-bev-btn" style="padding: 0.5rem 1.2rem; border-radius: 999px; font-size: 0.9rem; flex: none;">+ 새 음료 추가</button>
+          </div>
+
+          <div style="background: var(--glass-bg); border: 1px solid var(--glass-border); padding: 1.5rem; border-radius: 16px; margin-bottom: 2rem; backdrop-filter: blur(10px);">
+            <h3 style="margin-bottom: 1rem; border-bottom: 1px solid var(--glass-border); padding-bottom: 0.5rem; font-size:1.1rem; color:var(--text-main);">💬 접수된 희망 음료</h3>
+            <ul id="wish-list" style="list-style: none; padding: 0; margin: 0; display:flex; flex-direction:column; gap:0.5rem;">
+               <!-- Populated by JS -->
+            </ul>
+          </div>
+
+          <div class="stock-list" id="stock-list">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+      </section>
+
+      <!-- Stats View -->
+      <section id="stats-view" class="view">
+        <h2 style="margin-bottom: 2rem;">소비 현황 대시보드</h2>
+        <div class="stats-container">
+          <div class="stat-card" style="display: flex; flex-direction: column;">
+            <h3>베스트셀러 TOP 3</h3>
+            <div id="popular-beverage" style="margin-top: 1rem; text-align: left; display: flex; flex-direction: column; gap: 0.8rem; flex-grow: 1; justify-content: center;">-</div>
+          </div>
+          <div class="stat-card" style="display: flex; flex-direction: column;">
+            <h3>총 누적 소비량 (가져간 개수)</h3>
+            <div id="total-consumed" class="stat-value" style="flex-grow: 1; display: flex; align-items: center; justify-content: center;">0개</div>
+          </div>
+        </div>
+        
+        <div style="display: flex; flex-wrap: wrap; gap: 2rem; margin-top: 2rem;">
+          <div style="flex: 1 1 300px;">
+            <h3 style="margin-bottom: 1rem; border-bottom: 1px solid var(--glass-border); padding-bottom: 0.5rem;"><span style="color:#ef4444;">▼</span> 최근 소비 내역 <span style="font-size:0.8rem; color:var(--text-muted); font-weight:normal;">(최근 10건)</span></h3>
+            <ul class="log-list" id="take-log-list">
+               <!-- Populated by JS -->
+            </ul>
+          </div>
+          <div style="flex: 1 1 300px;">
+            <h3 style="margin-bottom: 1rem; border-bottom: 1px solid var(--glass-border); padding-bottom: 0.5rem;"><span style="color:#34d399;">▲</span> 최근 입고 및 관리 <span style="font-size:0.8rem; color:var(--text-muted); font-weight:normal;">(최근 10건)</span></h3>
+            <ul class="log-list" id="stock-log-list">
+               <!-- Populated by JS -->
+            </ul>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Authentication Modal -->
+  <div class="modal-overlay" id="auth-modal">
+    <div class="modal-content glass">
+      <h3 id="modal-beverage-name">음료 꺼내기</h3>
+      <p style="margin-bottom: 1rem;">본인 확인을 위해 아래 두 가지 방법 중 하나를 선택하세요.</p>
+      
+      <div style="background: rgba(0,0,0,0.2); border: 1px solid var(--glass-border); border-radius: 12px; padding: 1rem; margin-bottom: 1rem; text-align: left;">
+        <select id="user-select" style="margin-bottom: 0;">
+          <option value="">사용자를 선택하세요</option>
+          <!-- Populated by JS -->
+        </select>
+        
+        <div style="text-align: center; margin: 0.75rem 0; color: var(--text-muted); font-size: 0.85rem;">또는</div>
+        
+        <input type="text" id="user-phone-input" placeholder="휴대전화 끝 4자리 직접 입력" maxlength="4" style="margin-bottom: 0;">
+      </div>
+
+      <input type="password" id="user-pin" placeholder="비밀번호(PIN) 4자리 입력" maxlength="4" style="margin-top: 0.2rem;">
+      <p id="auth-error" class="error-msg"></p>
+      <div class="modal-actions">
+        <button id="cancel-btn" class="btn-secondary">취소</button>
+        <button id="confirm-btn" class="btn-primary">확인</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Registration Modal -->
+  <div class="modal-overlay" id="register-modal">
+    <div class="modal-content glass">
+      <h3>새 사용자 등록</h3>
+      <p>Masil을 이용할 새로운 사용자 정보를 등록하세요.</p>
+      <input type="text" id="reg-name" placeholder="이름 (예: 홍길동)">
+      <input type="text" id="reg-phone" placeholder="휴대전화 끝 4자리" maxlength="4">
+      <input type="password" id="reg-pin" placeholder="비밀번호 4자리" maxlength="4">
+      <p id="reg-error" class="error-msg"></p>
+      <div class="modal-actions">
+        <button id="reg-cancel-btn" class="btn-secondary">취소</button>
+        <button id="reg-confirm-btn" class="btn-primary">등록완료</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Beverage Modal -->
+  <div class="modal-overlay" id="add-bev-modal">
+    <div class="modal-content glass">
+      <h3>새 음료 등록</h3>
+      <p>새로운 음료의 이름, 사진, 초기 재고를 등록하세요.</p>
+      
+      <input type="text" id="new-bev-name" placeholder="음료 이름 (예: 몬스터 에너지)">
+      <input type="number" id="new-bev-stock" placeholder="초기 입고 수량" min="1" value="10">
+      
+      <div style="text-align: left; margin-bottom: 1rem;">
+        <label style="display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem;">음료 사진 선택</label>
+        <input type="file" id="new-bev-image" accept="image/*" style="padding: 0.5rem; background: rgba(0,0,0,0.2);">
+      </div>
+
+      <p id="add-bev-error" class="error-msg"></p>
+      <div class="modal-actions">
+        <button id="add-bev-cancel-btn" class="btn-secondary">취소</button>
+        <button id="add-bev-confirm-btn" class="btn-primary">등록완료</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Wish Modal -->
+  <div class="modal-overlay" id="wish-modal">
+    <div class="modal-content glass">
+      <h3>희망 음료 신청</h3>
+      <p>냉장고에 있었으면 하는 음료를 적어주세요!</p>
+      <input type="text" id="wish-text" placeholder="예: 제로 콜라, 닥터페퍼 등">
+      <p id="wish-error" class="error-msg"></p>
+      <div class="modal-actions">
+        <button id="wish-cancel-btn" class="btn-secondary">취소</button>
+        <button id="wish-confirm-btn" class="btn-primary">신청하기</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete Confirm Modal -->
+  <div class="modal-overlay" id="delete-confirm-modal">
+    <div class="modal-content glass">
+      <h3 style="color: #ef4444;">음료 삭제 경고</h3>
+      <p>정말 <strong id="delete-target-name"></strong> 음료를 완전히 삭제하시겠습니까?<br><span style="font-size:0.85rem; color:var(--text-muted);">이 작업은 되돌릴 수 없습니다.</span></p>
+      <div class="modal-actions">
+        <button id="delete-cancel-btn" class="btn-secondary">취소</button>
+        <button id="delete-confirm-btn" class="btn-primary" style="background: #ef4444; color: white; border: 1px solid #ef4444;">삭제하기</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
