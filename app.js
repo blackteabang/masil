@@ -173,6 +173,7 @@ document.addEventListener('DOMContentLoaded', () => {
       document.getElementById('admin-login-area').classList.add('hidden');
       document.getElementById('admin-dashboard').classList.remove('hidden');
       renderAdminStock();
+      renderUserList();
     } else {
       adminError.textContent = '관리자 PIN이 올바르지 않습니다.';
       adminError.style.display = 'block';
@@ -181,6 +182,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function renderAdminStock() {
     const list = document.getElementById('stock-list');
+    if (!list) return;
     list.innerHTML = '';
     const beverages = getBeverages();
     
@@ -282,6 +284,38 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  function renderUserList() {
+    const list = document.getElementById('user-list');
+    if (!list) return;
+    list.innerHTML = '';
+    const users = getUsers().filter(u => u.role !== 'admin');
+
+    if (users.length === 0) {
+      list.innerHTML = '<li style="color:var(--text-muted); font-size:0.9rem; padding: 0.5rem;">등록된 사용자가 없습니다.</li>';
+      return;
+    }
+
+    users.forEach(u => {
+      const li = document.createElement('li');
+      li.style.cssText = "display:flex; justify-content:space-between; align-items:center; padding: 0.6rem 1rem; background: rgba(0,0,0,0.2); border-radius: 8px; border: 1px solid rgba(255,255,255,0.05); flex: 1 1 180px; min-width: 150px; max-width: 250px;";
+      const phoneStr = u.phoneLast4 ? ` (${u.phoneLast4})` : '';
+      li.innerHTML = `
+        <span style="color: white; font-weight: 500;">${u.name}${phoneStr}</span>
+        <button class="user-delete-btn" style="background:none; border:none; color:#ef4444; cursor:pointer; font-weight:bold; font-size:1.1rem; padding:0 0.5rem; transition:0.2s;">×</button>
+      `;
+      
+      const delBtn = li.querySelector('.user-delete-btn');
+      delBtn.addEventListener('mouseover', () => delBtn.style.opacity = '0.7');
+      delBtn.addEventListener('mouseout', () => delBtn.style.opacity = '1');
+      delBtn.addEventListener('click', () => {
+        window.userToDeleteId = u.id;
+        document.getElementById('delete-user-name').textContent = u.name;
+        document.getElementById('delete-user-confirm-modal').classList.add('active');
+      });
+      list.appendChild(li);
+    });
+  }
+
   // Delete Confirm Modal Logic
   document.getElementById('delete-cancel-btn').addEventListener('click', () => {
     document.getElementById('delete-confirm-modal').classList.remove('active');
@@ -299,7 +333,28 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // Add Beverage Modal Logic
+  // Delete User Confirm Modal Logic
+  document.getElementById('delete-user-cancel-btn').addEventListener('click', () => {
+    document.getElementById('delete-user-confirm-modal').classList.remove('active');
+    window.userToDeleteId = null;
+  });
+
+  document.getElementById('delete-user-confirm-btn').addEventListener('click', () => {
+    if (window.userToDeleteId) {
+      const users = getUsers();
+      const user = users.find(u => String(u.id) === String(window.userToDeleteId));
+      const userName = user ? user.name : 'Unknown';
+      
+      deleteUser(window.userToDeleteId);
+      renderUserList();
+      renderUserSelect();
+      logTransaction('관리자', userName, 'delete_user', 1);
+      
+      document.getElementById('delete-user-confirm-modal').classList.remove('active');
+      alert(`🗑️ [${userName}] 사용자가 정상적으로 삭제되었습니다.`);
+      window.userToDeleteId = null;
+    }
+  });
   const addBevModal = document.getElementById('add-bev-modal');
   const addBevError = document.getElementById('add-bev-error');
 

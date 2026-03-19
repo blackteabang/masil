@@ -142,3 +142,11 @@ function removeWish(id) {
 }
 
 initData();
+
+// Delete a user (except admin)
+function deleteUser(id) {
+  if (id === 'admin') return; // protect admin
+  let users = getUsers();
+  users = users.filter(u => String(u.id) !== String(id));
+  localStorage.setItem('users', JSON.stringify(users));
+}
